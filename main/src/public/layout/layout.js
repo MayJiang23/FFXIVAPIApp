@@ -23,7 +23,9 @@ function LayoutMain() {
 	InitModal();
 	InitMainIntro();
 	InitMainContents();
-	InitTaskList();
+	(async () => {
+		await InitTaskList();
+	  })();	  
 	InitFooter();
 	const headerEle = document.getElementById('header');
     BuildAuthSection(headerEle);

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { checkTask, createTask, deleteTask, editTaskDesc, getTaskSummary } from '../services/tasklistServices.js';
+import { checkTask, createTask, deleteTask, editTaskDesc, getTaskSummary, getTasks } from '../services/tasklistServices.js';
 import { ToggleDisplay } from './displayUtil.js';
 import { BuildModal } from './modal.js';
 
@@ -21,7 +21,7 @@ function tasklistErrorHandler(title = "Tasklist Error", message) {
  * InitTaskList
  * Initiate the task list
  */
-function InitTaskList() {
+async function InitTaskList() {
 
     const initTaskContainer = document.createElement('div');
     initTaskContainer.className = "tasklist-init";
@@ -140,6 +140,9 @@ function InitTaskList() {
     tasklistDiv.appendChild(summaryDiv);
 
     document.body.appendChild(initTaskContainer);
+
+    await RenderInitialTaskList();  // ✅ fetch and append tasks
+    await UpdateTasklistSummary();  // ✅ update summary
 
 
 
@@ -290,6 +293,26 @@ async function UpdateTasklistSummary() {
     const span = document.getElementById("tasklist-summary");
     span.textContent = output;
 };
+
+async function RenderInitialTaskList() {
+    try {
+        const tasklist = document.getElementById('taskBullets');
+        const tasks = await getTasks();
+
+        if (Array.isArray(tasks)) {
+            tasks.forEach(task => {
+                const taskBullet = CreateTaskElement(task.description, task.item_id);
+                if (task.is_completed) {
+                    taskBullet.classList.add('checked');
+                }
+                tasklist.appendChild(taskBullet);
+            });
+        }
+    } catch (error) {
+        tasklistErrorHandler("Tasklist Load Error", error.message);
+    }
+}
+
 
 export {
     InitTaskList,
