@@ -3,6 +3,7 @@
 import { loginValidate } from '../services/authServices.js';
 import { BuildModal } from '../components/modal.js';
 import { MonitorAuthServices } from '../services/monitorServices.js';
+import { ToggleDisplay } from '../components/displayUtil.js';
 
 function InitLoginForm() {
 	const mainContentDiv = document.getElementById("main-contents");
@@ -40,7 +41,13 @@ function CreateLoginPanel() {
 	  const password = document.getElementById("passLog").value;
 	  try {
 		await loginValidate(email, password);
-		BuildModal({ title: "Successful Login!", children: "You successfully logged in!" });
+		const closeHandler = () => {
+			ToggleDisplay(".modal-container.small", false);
+			setTimeout(() => {
+				window.location.href = '../..';
+			}, 1000);		
+		};
+		BuildModal({ title: "Successful Login!", children: "You successfully logged in!", onClose: closeHandler });
 	  } catch (error) {
 		BuildModal({ title: "Login Error", children: `${error.message}` });
 	  }

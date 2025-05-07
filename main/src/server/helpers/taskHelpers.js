@@ -146,30 +146,23 @@ async function completeItem(list_id, item_id, is_completed) {
     }
 };
 
-async function countCompletedTasks(tasklist_id) {
+async function countAllTasks(tasklist_id) {
     try {
-        const completed = await passQuery(`SELECT COUNT(*) AS completed_count
+        const result = await passQuery(`
+            SELECT 
+                COUNT(*) AS total,
+                SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) AS completed
             FROM tasklist_item
-            WHERE tasklist_id = ? AND is_completed = 1`, [tasklist_id]);
-        return completed[0] || null;
-    } catch(error) {
+            WHERE tasklist_id = ?;
+        `, [tasklist_id]);
+        const { total = 0, completed = 0 } = result[0] || {};
+        return { total, completed };
+    } catch (error) {
         console.warn(error);
-        return null;
+        return { total: 0, completed: 0 };
     }
 };
 
-async function countAllTasks(tasklist_id) {
-    try {
-       const taskCount = await passQuery(`SELECT COUNT(*) AS total_count,
-        SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) AS completed_count
-        FROM tasklist_item
-        WHERE tasklist_id = ?;`, [tasklist_id]);
-        return taskCount[0] || null;
-    } catch (error) {
-        console.warn(error);
-        return null;
-    }
-}
 
 module.exports = {
     insertTaskItem,
@@ -180,6 +173,5 @@ module.exports = {
     editItemDueDate,
     completeItem,
     createTasklist,
-    countCompletedTasks,
     countAllTasks,
 };

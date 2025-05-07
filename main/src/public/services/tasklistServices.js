@@ -25,9 +25,7 @@ async function createTask(description) {
             return id;  
         }
         throw new Error(`Creating task error occured! ${error}`, { cause: error });
-    }
-    
-   
+    }   
 };
 
 /** 
