@@ -101,11 +101,8 @@ async function getTasks() {
             return [];
         }
     } catch (error) {
-        if (isGuestService(error)) {
-            const items = getLocalTasks();
-            return items || [];
-        }
-        throw new Error(`Getting all tasks error occured! ${error.message}`, { cause: error });
+        console.warn(`Getting task error occured! ${error.message}`, { cause: error });
+        return null;
     }
 };
 

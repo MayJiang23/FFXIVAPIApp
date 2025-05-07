@@ -1,6 +1,8 @@
 const ToggleClass = (ele, onShow) => {
     ele.classList.remove("show", "hide");
     ele.classList.add(onShow ? "show" : "hide");
+    console.log("ele:", ele);
+    console.log("onShow: ", onShow);
 };
 
 /**
