@@ -63,7 +63,7 @@ async function InitTaskList() {
     tasklist.id = "taskBullets";
     //Check the task list by clicking task item
     tasklist.addEventListener('click', async function (ev) {
-        if (ev.target.tagName === 'LI' || ev.target.classList.contains('taskText')) {
+        if (ev.target.tagName === 'LI' ) {
             let item_id = ev.target.dataset.id;
             let is_completed = (ev.target.classList.contains('checked'));
             try {
@@ -182,9 +182,7 @@ function CreateTaskElement(taskText, item_id) {
     // Init a task bullet 
     const taskBullet = document.createElement("li");
     taskBullet.dataset.id = item_id; //Sets the id in the class name
-    const taskSpan = document.createElement("span");
-    taskSpan.textContent = taskText;
-    taskSpan.className = "taskText";
+    taskBullet.textContent = taskText;
 
     // Sets up the misc functionality that 
     // can edit or delete the bullet
@@ -275,18 +273,19 @@ async function InitUpdateBox(item_id) {
     updateInput.className = "task-item-input-update";
     
     // Assume focus out means the edit is finished
-    updateInput.addEventListener("focusout", async (e) => {
+    updateInput.addEventListener("blur", async (e) => {
         let description = updateInput.value;
         if (!validateTaskInput(description, "Tasklist Update Error")) return;
         try {
             await editTaskDesc(item_id, description); //Sync the update in database
             const updatedEle = CreateTaskElement(description, item_id); //Create new element of tasklist
-            updateInput.replaceWith(updatedEle); //Replace the input box with the updated ele
+            setTimeout(() => {
+                updateInput.replaceWith(updatedEle);
+            }, 0);        
         } catch(error) {
             tasklistErrorHandler("Tasklist Update Error", error.message);
             return;
         }
-        
     });
 
     // Assume enter means the edit is finished

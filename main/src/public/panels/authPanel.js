@@ -12,8 +12,8 @@ async function ActivateAuthSection() {
 	} else {
 		UpdateUserProfile(username);
 	}
-	ToggleDisplay((username) ? '#auth-section' : '#user-dropdown', true);
-	ToggleDisplay((username) ? '#user-dropdown' : "#auth-section", false);
+	ToggleDisplay((username) ? '#user-dropdown' : '#auth-section', true);
+	ToggleDisplay((username) ? '#auth-section' : '#user-dropdown', false);
 };
 
 function UpdateUserProfile(username) {

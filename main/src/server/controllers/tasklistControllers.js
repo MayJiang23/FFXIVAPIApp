@@ -160,8 +160,11 @@ async function summarizeTaskProgress(req, res) {
     const list_id = await getTasklistId(req);
     if (!list_id) return res.status(401).json({ error: "Service unavailable to unauthorized user, please login." }); 
     try {
-        const {completed} = await countCompletedTasks(list_id);
+        let {completed} = await countCompletedTasks(list_id);
         const {total} = await countAllTasks(list_id);
+        if (!completed) completed = 0;
+        if (!total) total = 0;
+        if (total === 0 && completed === 0) return res.status(200).json("No task yet");
         return res.status(200).json(`You completed ${completed} out of ${total} tasks.`);
     } catch (error) {
         console.warn(`Either no user is logged in, or there exists no list yet.`);

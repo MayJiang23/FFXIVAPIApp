@@ -4,6 +4,7 @@
     position: fixed;
     bottom: 0px;
     right: 0;
+    z-index: 500;
 }
 
 #tasklist-container {
