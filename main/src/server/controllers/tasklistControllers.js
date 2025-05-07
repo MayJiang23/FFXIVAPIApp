@@ -162,7 +162,7 @@ async function summarizeTaskProgress(req, res) {
     const tasklist_id = await getTasklistId(req);
     const {completed} = await countCompletedTasks(tasklist_id);
     const {total} = await countAllTasks(tasklist_id);
-    res.json(`You completed ${completed} out of ${total} tasks.`);
+    return res.status(200).json(`You completed ${completed} out of ${total} tasks.`);
 };
   
 module.exports = {

@@ -33,7 +33,7 @@ async function InitTaskList() {
     // Creating the fold button in the tasklist
     const foldButton = document.createElement("img");
     foldButton.classList.add("expand");
-    foldButton.src = "icons/fold.png";
+    foldButton.src = "./icons/fold.png";
     foldButton.style.width = "20";
     foldButton.alt = "Tasklist Fold Button";
     foldButton.classList.add("tasklist-display-button", "expand");
@@ -82,7 +82,7 @@ async function InitTaskList() {
     //The add task list button
     const addTaskListIcon = document.createElement("img");
     addTaskListIcon.alt = "Add Task Icon";
-    addTaskListIcon.src = "icons/add.png";
+    addTaskListIcon.src = "./icons/add.png";
     addTaskListIcon.width = "20";
     addTaskListIcon.className = "tasklist-add-task-icon";
     //The task input box container
@@ -95,7 +95,7 @@ async function InitTaskList() {
     taskTextBox.className = "tasklist-add-task-text-input";
     //The enter button for the task input
     const enterTaskButton = document.createElement("img");
-    enterTaskButton.src = "icons/check.png";
+    enterTaskButton.src = "./icons/check.png";
     enterTaskButton.alt = "Enter Tasklist Icon";
     enterTaskButton.className = "tasklist-add-task-enter";
     //The enter button will add a new task in the task list
