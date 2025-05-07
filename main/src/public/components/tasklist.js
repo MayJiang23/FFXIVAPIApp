@@ -233,14 +233,28 @@ function CreateTaskElement(taskText, item_id) {
  */
 async function DeleteTaskInTaskList(item_id) {
     const taskBullet = document.querySelector(`[data-id="${item_id}"]`);
-    const result = await deleteTask(item_id);
-    if (result instanceof Error) {
-        BuildModal({ title: "Tasklist Delete Error", children: `${result.message}` });
+    if (!taskBullet) {
+        BuildModal({ title: "Task Not Found", children: "This task no longer exists." });
         return;
-    } else {
-        taskBullet.remove();
-        await UpdateTasklistSummary();
-    }
+      }
+    const confirmDelete = async () => {
+        const result = await deleteTask(item_id);
+        if (result instanceof Error) {
+            BuildModal({ title: "Tasklist Delete Error", children: `${result.message}` });
+            return;
+        } else {
+            taskBullet.remove();
+            await UpdateTasklistSummary();
+            ToggleDisplay('.modal-container.small', false);
+        }
+    };
+
+    const cancelDelete = () => {
+        ToggleDisplay('.modal-container.small', false);
+    };
+    BuildModal({title: "Delete task", children: 'Are you sure you want to delete this task?', 
+        confirmBut: "Delete", onConfirm: confirmDelete, cancelBut: "Cancel", onCancel: cancelDelete });
+    
 };
 
 /**
