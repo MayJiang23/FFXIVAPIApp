@@ -42,7 +42,7 @@ async function getTasklistId(req, res) {
  */
 async function getAllTasks(req, res) {
     const list_id = await getTasklistId(req, res);
-    if (!list_id) return;
+    if (!list_id) return res.status(401).json({ error: "Service unavailable to unauthorized user, please login." }); 
     try {
         const items = await fetchTaskItems(list_id);
         if (!items) {
@@ -66,7 +66,7 @@ async function getAllTasks(req, res) {
  */
 async function updateTaskDesc(req, res) {    
     const list_id = await getTasklistId(req, res);
-    if (!list_id) return;
+    if (!list_id) return res.status(401).json({ error: "Service unavailable to unauthorized user, please login." }); 
     try {
         const { item_id, description } = req.body;
         await editItemDescription(list_id, item_id, description);
@@ -85,7 +85,7 @@ async function updateTaskDesc(req, res) {
  */
 async function deleteTask(req, res) {
     const list_id = await getTasklistId(req, res);
-    if (!list_id) return;
+    if (!list_id) return res.status(401).json({ error: "Service unavailable to unauthorized user, please login." }); 
     try {
         const { item_id } = req.body;
         await deleteItem(list_id, item_id);
@@ -105,7 +105,7 @@ async function deleteTask(req, res) {
  */
 async function updateTaskDueDate(req, res) {
     const list_id = await getTasklistId(req, res);
-    if (!list_id) return;
+    if (!list_id) return res.status(401).json({ error: "Service unavailable to unauthorized user, please login." }); 
     try {
         const { item_id, due_date } = req.body;
         await editItemDueDate(list_id, item_id, due_date);
@@ -125,8 +125,7 @@ async function updateTaskDueDate(req, res) {
  */
 async function addTask(req, res) {
     const list_id = await getTasklistId(req, res);
-    console.log();
-    if (!list_id) return;
+    if (!list_id) return res.status(401).json({ error: "Service unavailable to unauthorized user, please login." }); 
     try { 
         const { description } = req.body;
         const item_id = await insertTaskItem({ list_id, description });
@@ -146,7 +145,7 @@ async function addTask(req, res) {
  */
 async function completeTask(req, res) {
     const list_id = await getTasklistId(req, res);
-    if (!list_id) return;
+    if (!list_id) return res.status(401).json({ error: "Service unavailable to unauthorized user, please login." }); 
     try {
         const { item_id, is_completed } = req.body;
         await completeItem(list_id, item_id, is_completed);
@@ -159,10 +158,10 @@ async function completeTask(req, res) {
 
 async function summarizeTaskProgress(req, res) {
     const list_id = await getTasklistId(req);
-    if (!list_id) return;
+    if (!list_id) return res.status(401).json({ error: "Service unavailable to unauthorized user, please login." }); 
     try {
-        const {completed} = await countCompletedTasks(tasklist_id);
-        const {total} = await countAllTasks(tasklist_id);
+        const {completed} = await countCompletedTasks(list_id);
+        const {total} = await countAllTasks(list_id);
         return res.status(200).json(`You completed ${completed} out of ${total} tasks.`);
     } catch (error) {
         console.warn(`Either no user is logged in, or there exists no list yet.`);
