@@ -3,6 +3,7 @@
 import { UpdateMapImage } from "../components/map.js";
 import { InitSelect } from "../components/select.js";
 import { loadAllMaps, loadLocationSelectHTML } from "../services/apiServices/mapServices.js";
+import { MonitorAPIServices } from "../services/monitorServices.js";
 import { getLocalMap, getLocalSelectHTML } from "../utils/apiUtils.js";
 
 const locationSelectHandler = (e) => {
@@ -75,4 +76,5 @@ document.addEventListener("DOMContentLoaded", async (e) => {
     TriggerFirstMap();
     PeriodicSelectUpdate();
     loadAllMaps();
+    MonitorAPIServices();
 });

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 const { passQuery } = require("../utils/queryUtils");
+const { formatTimestamp } = require("./timestamHelpers");
 
 /**
  * checkIfTasklistExist
@@ -33,11 +34,16 @@ async function checkIfTasklistExist(user_id) {
  * @returns {number|null} 
  */
 async function findTasks(list_id, description) {
-    const result = 
+    try {
+        const result = 
         await passQuery(`SELECT * FROM tasklist_item WHERE description = ?
             AND tasklist_id = ?`, [description, list_id]);
-    console.log(result);
-    return (result.length === 0) ? null : result;
+            console.log(result);
+            return (result.length === 0) ? null : result;
+
+    } catch (error) {
+        return null;
+    }
 }
 
 /**
@@ -49,13 +55,7 @@ async function findTasks(list_id, description) {
 async function createTasklist(user_id) {
     try {
         const now = new Date();
-
-    const formatted = now.getFullYear() + '-' +
-    String(now.getMonth() + 1).padStart(2, '0') + '-' +
-    String(now.getDate()).padStart(2, '0') + ' ' +
-    String(now.getHours()).padStart(2, '0') + ':' +
-    String(now.getMinutes()).padStart(2, '0') + ':' +
-    String(now.getSeconds()).padStart(2, '0');
+        const formated = formatTimestamp(now);
         await passQuery("INSERT INTO tasklist (user_id, created_at) VALUES (?, ?)", 
             [user_id, formatted]);
     } catch (error) {
@@ -73,26 +73,20 @@ async function createTasklist(user_id) {
 async function insertTaskItem({ list_id, description, is_completed = false, due_date = null }) {
     try {
         const now = new Date();
-
-    const created_at = now.getFullYear() + '-' +
-    String(now.getMonth() + 1).padStart(2, '0') + '-' +
-    String(now.getDate()).padStart(2, '0') + ' ' +
-    String(now.getHours()).padStart(2, '0') + ':' +
-    String(now.getMinutes()).padStart(2, '0') + ':' +
-    String(now.getSeconds()).padStart(2, '0');
+        const created_at = formatTimestamp(now);
         await passQuery(`INSERT INTO tasklist_item (tasklist_id, description, 
             is_completed, due_date, created_at) VALUES (?, ?, ?, ?, ?)`, 
             [list_id, description, is_completed, due_date, created_at]);
         const result = await passQuery(`SELECT * FROM tasklist_item WHERE description = ?
             AND tasklist_id = ? AND created_at = ?`, [description, list_id, created_at]);
         if (result) {
-            console.log(result[0])
             return result[0].item_id;
         } else {
             return null;
         }
     } catch (error) {
         console.warn(error);
+        return null;
     }
 };
 

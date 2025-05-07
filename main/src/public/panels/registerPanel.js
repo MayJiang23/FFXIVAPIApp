@@ -2,6 +2,7 @@
 //public/services/registerPanel.js
 import { registerUser } from '../services/authServices.js';
 import { BuildModal } from '../components/modal.js';
+import { MonitorAuthServices } from '../services/monitorServices.js';
 
 function InitRegisterForm() {
 	const mainContentDiv = document.getElementById("main-contents");
@@ -55,4 +56,5 @@ function CreateRegisterPanel() {
 document.addEventListener("DOMContentLoaded", (e) => {
 	InitRegisterForm();
 	CreateRegisterPanel();
+	MonitorAuthServices();
 });

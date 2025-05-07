@@ -2,6 +2,7 @@
 //public/services/loginPanel.js
 import { loginValidate } from '../services/authServices.js';
 import { BuildModal } from '../components/modal.js';
+import { MonitorAuthServices } from '../services/monitorServices.js';
 
 function InitLoginForm() {
 	const mainContentDiv = document.getElementById("main-contents");
@@ -49,4 +50,5 @@ function CreateLoginPanel() {
 document.addEventListener("DOMContentLoaded", (e) => {
 	InitLoginForm();
 	CreateLoginPanel();
+	MonitorAuthServices();
 });

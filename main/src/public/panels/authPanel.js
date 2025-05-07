@@ -2,6 +2,7 @@
 import { checkUser } from "../services/userServices.js";
 import { ToggleDisplay } from "../components/displayUtil.js"; 
 import { createGuest  } from "../services/guestServices.js";
+import { MonitorUserServices } from "../services/monitorServices.js";
 
 async function ActivateAuthSection() {
 	const username = await checkUser();
@@ -20,6 +21,9 @@ function UpdateUserProfile(username) {
 	usernameSpan.textContent = username;
 };
 
-document.addEventListener("DOMContentLoaded", (e) => {
-	ActivateAuthSection();
+document.addEventListener("DOMContentLoaded", async (e) => {
+	await ActivateAuthSection();
+	MonitorUserServices();
 });
+
+

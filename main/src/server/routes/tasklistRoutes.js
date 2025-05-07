@@ -1,8 +1,6 @@
 /* eslint-disable no-undef */
 // src/server/routes/tasklistRoutes.js
 const express = require('express');
-const cors = require('cors');
-const app = express();
 const router = express.Router();
 
 const { getAllTasks, 
@@ -10,8 +8,6 @@ const { getAllTasks,
     updateTaskDesc, 
     addTask, 
     completeTask } = require('../controllers/tasklistControllers');
-
-app.use(cors({ origin: 'https://ffxiv-api-app-150199820340.us-central1.run.app' }));
 
 // GET route that fetches all items in the db
 router.get('/items', getAllTasks);
@@ -27,5 +23,21 @@ router.patch('/complete', completeTask);
 
 // PATCH route that update description of task in db
 router.patch('/updatedesc', updateTaskDesc);
+
+let lastHeartbeat = Date.now();
+
+// monitor availability
+setInterval(() => {
+    if (Date.now() - lastHeartbeat > 10000) {
+        console.warn("Server may be unresponsive!");
+    }
+}, 15 * 1000);
+
+
+// health ping endpoint
+router.get('/health', (req, res) => {
+    lastHeartbeat = Date.now();
+    res.send({ status: 'OK' });
+});
 
 module.exports = router;
