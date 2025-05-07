@@ -11,7 +11,7 @@ import { isGuestService } from './guestServices.js';
  * createTask
  * Create a task and insert it into the db
  * @param {string} description 
- * @returns {number} item_id
+ * @returns {number} item_id or error
  */
 async function createTask(description) {
     try {
@@ -24,7 +24,7 @@ async function createTask(description) {
             const { id } = addLocalTask(description);
             return id;  
         }
-        return new Error(`Creating task error occured! ${error}`, { cause: error });
+        throw new Error(`Creating task error occured! ${error}`, { cause: error });
     }
     
    
@@ -34,6 +34,7 @@ async function createTask(description) {
  * deleteTask
  * Delete a single task and update in the db
  * @param {number} item_id
+ * @returns error or nothing
  */
 async function deleteTask(item_id) {
     try {
@@ -43,7 +44,7 @@ async function deleteTask(item_id) {
             deleteLocalTask(item_id);            
             return;
         }
-        return new Error(`Deleting task error occured! ${error}`, { cause: error });
+        throw new Error(`Deleting task error occured! ${error}`, { cause: error });
     }
 };
 
@@ -52,6 +53,7 @@ async function deleteTask(item_id) {
  * Check a task and update it in the db 
  * @param {number} item_id
  * @param {number} is_completed
+ * @returns error or nothing
  */
 async function checkTask(item_id, is_completed) {
     try {
@@ -61,7 +63,7 @@ async function checkTask(item_id, is_completed) {
             toggleLocalTask(item_id);            
             return;
         }
-        return new Error(`Checking task error occured! ${error}`, { cause: error });
+        throw new Error(`Checking task error occured! ${error}`, { cause: error });
     }
     
 };
@@ -71,6 +73,7 @@ async function checkTask(item_id, is_completed) {
  * Edit a task's description and update it in the db
  * @param {number} item_id
  * @param {string} description
+ * @returns error or nothing
  */
 async function editTaskDesc(item_id, description) {
     try {
@@ -80,7 +83,7 @@ async function editTaskDesc(item_id, description) {
             updateLocalTask(item_id, description);
             return;
         }
-        return new Error(`Editing task desc error occured! ${error}`, { cause: error });
+        throw new Error(`Editing task desc error occured! ${error}`, { cause: error });
     }
 };
 
@@ -88,7 +91,7 @@ async function editTaskDesc(item_id, description) {
 /**
  * getTasks
  * Get all the tasks in current user's tasklist
- * @returns 
+ * @returns error or items
  */
 async function getTasks() {
     try {
@@ -102,7 +105,7 @@ async function getTasks() {
             const items = getLocalTasks();
             return items;
         }
-        return new Error(`Getting all tasks error occured! ${error}`, { cause: error });
+        throw new Error(`Getting all tasks error occured! ${error.message}`, { cause: error });
     }
 };
 

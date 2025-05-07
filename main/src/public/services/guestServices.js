@@ -3,11 +3,11 @@ import { getLocal, setLocal } from '../utils/localUtils.js';
 
 /**
  * 
- * @param {*} error 
- * @returns 
+ * @param {response} error 
+ * @returns true or false
  */
 function isGuestService(error) {
-    if (error.response.status === 401) {
+    if (error.response.status && error.response.status === 401) {
       return true;
     }
     return false;
@@ -23,8 +23,6 @@ async function createGuest() {
     const guestName = `guest_${Date.now()}`;
     setLocal('guest', guestName);
     console.log('Guest creation request received at: ', new Date().toLocaleTimeString());
-  } else {
-    console.log('Guest exists, does nothing.');
   }
 };
 
