@@ -17,6 +17,7 @@ async function listAllMapRowID(req, res) {
         res.status(200).json(data.rows);        
     } catch (error) {
         console.error("Error fetching map list:", error);
+        res.status(500).json("Error fetching map:", error);
     }
 };
 
@@ -29,6 +30,7 @@ async function getMapRow(req, res) {
         res.status(200).json(data);
     } catch (error) {
         console.error("Error fetching map row:", error);
+        res.status(500).json("Error fetching map:", error);
     }
 };
 
@@ -41,8 +43,21 @@ async function getMap(req, res) {
         res.send(Buffer.from(buffer));
     } catch (error) {
         console.error("Error fetching map list:", error);
+        res.status(500).json("Error fetching map:", error);
     }
 };
+
+async function getQuests(req, res) {
+    try {
+        const { limit } = req.params;
+        const response = await fetch(`https://v2.xivapi.com/api/sheet/Quest?limit=${limit}`);
+        const data = await response.json();
+        res.status(200).json(data.rows);
+    } catch (error) {
+        console.error("Error fetching map row:", error);
+        res.status(500).json("Error fetching quest:", error);
+    }
+}
 
 module.exports = {
     listAllMapRowID,

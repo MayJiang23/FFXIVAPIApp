@@ -1,9 +1,6 @@
 const ToggleClass = (ele, onShow) => {
-    if (!ele.classList.contains("hide") && !ele.classList.contains("show")) {
-        ele.classList.add((onShow) ? "show" : "hide");
-    } else {
-        ele.classList.replace((onShow) ? "hide" : "show", (onShow) ? "show" : "hide"); 
-    } 
+    ele.classList.remove("show", "hide");
+    ele.classList.add(onShow ? "show" : "hide");
 };
 
 /**
