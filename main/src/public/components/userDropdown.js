@@ -20,7 +20,9 @@ function BuildUserDropdown() {
     userDropdownDiv.appendChild(dropdownContent);
     BuildUserDropdownContent();
     userDropdownDiv.addEventListener("mouseover", () => {
-        ToggleDisplay('#user-dropdown-content', true);
+        if (userDropdownDiv.classList.contains("show")) {
+			ToggleDisplay('#user-dropdown-content', true);
+		}
     });
     userDropdownDiv.addEventListener("mouseleave", () => {
         ToggleDisplay('#user-dropdown-content', false);

@@ -9,11 +9,13 @@ async function ActivateAuthSection() {
 	console.log("Find the user: ", username);
 	if (!username) {
 		createGuest();
+		ToggleDisplay('#auth-section', true);
+		ToggleDisplay('#user-dropdown', false);
 	} else {
 		UpdateUserProfile(username);
+		ToggleDisplay('#user-dropdown', true);
+		ToggleDisplay('#auth-section', false);
 	}
-	ToggleDisplay((username) ? '#user-dropdown' : '#auth-section', true);
-	ToggleDisplay((username) ? '#auth-section' : '#user-dropdown', false);
 };
 
 function UpdateUserProfile(username) {
