@@ -221,7 +221,6 @@ function CreateTaskElement(taskText, item_id) {
             ToggleDisplay(miscDropdownDiv, true) : 
             ToggleDisplay(miscDropdownDiv, false);
     };
-    taskBullet.appendChild(taskSpan);
     miscDiv.appendChild(miscSpan);
     miscDiv.appendChild(miscDropdownDiv);
     taskBullet.appendChild(miscDiv);
