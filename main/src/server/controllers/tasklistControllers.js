@@ -152,7 +152,7 @@ async function completeTask(req, res) {
         return res.status(200);
     } catch (error) {
         console.warn("Unknown error: ", error);
-        return res.status(500).json({ error: `Internal server error: ${error}` });
+        return res.status(500).json({ error: `Internal server error: ${error.message}` });
     }
 };
 
@@ -165,7 +165,7 @@ async function summarizeTaskProgress(req, res) {
         return res.status(200).json(`You completed ${completed} out of ${total} tasks.`);
     } catch (error) {
         console.warn(`Either no user is logged in, or there exists no list yet.`);
-        return;
+        return res.status(500).json({ error: `Internal server error: ${error.message}` });
     }
 };
   
