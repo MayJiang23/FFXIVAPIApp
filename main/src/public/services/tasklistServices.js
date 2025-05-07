@@ -109,10 +109,22 @@ async function getTasks() {
     }
 };
 
+async function getTaskSummary() {
+    try {
+        const response = await api.get('/tasklist/summary');
+        if (response.data) {
+            return response.data;
+        } 
+    } catch (error) {
+        throw new Error(`Getting task summary error occured! ${error.message}`, { cause: error });
+    }
+}
+
 export {
     createTask,
     deleteTask,
     checkTask,
     editTaskDesc,
-    getTasks,  
+    getTasks,
+    getTaskSummary,  
 };

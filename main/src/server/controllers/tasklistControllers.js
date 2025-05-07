@@ -4,7 +4,10 @@ const { getUserid } = require("../helpers/userHelpers");
 const { fetchTaskItems, checkIfTasklistExist, createTasklist, 
     editItemDescription, deleteItem, editItemDueDate, 
     insertTaskItem,
-    completeItem} = require("../helpers/taskHelpers");
+    completeItem,
+    countCompletedTasks,
+    countAllTasks} = require("../helpers/taskHelpers");
+const { passQuery } = require("../utils/queryUtils");
 
 /**
  * getTasklistId
@@ -160,6 +163,13 @@ async function completeTask(req, res) {
     }
 };
 
+async function summarizeTaskProgress(req, res) {
+    const tasklist_id = await getTasklistId(req);
+    const completed = await countCompletedTasks(tasklist_id);
+    const total = await countAllTasks(tasklist_id);
+    res.json(`You completed ${completed} out of ${total} tasks.`);
+};
+  
 module.exports = {
     getTasklistId,
     getAllTasks,
@@ -168,4 +178,5 @@ module.exports = {
     updateTaskDueDate,
     addTask,
     completeTask,
+    summarizeTaskProgress,
 };

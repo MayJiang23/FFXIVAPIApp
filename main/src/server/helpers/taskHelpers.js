@@ -55,7 +55,7 @@ async function findTasks(list_id, description) {
 async function createTasklist(user_id) {
     try {
         const now = new Date();
-        const formated = formatTimestamp(now);
+        const formatted = formatTimestamp(now);
         await passQuery("INSERT INTO tasklist (user_id, created_at) VALUES (?, ?)", 
             [user_id, formatted]);
     } catch (error) {
@@ -146,6 +146,31 @@ async function completeItem(list_id, item_id, is_completed) {
     }
 };
 
+async function countCompletedTasks(tasklist_id) {
+    try {
+        const completed = await passQuery(`SELECT COUNT(*) AS completed_count
+            FROM tasklist_item
+            WHERE tasklist_id = ? AND is_completed = 1`, [tasklist_id]);
+        return completed[0] || null;
+    } catch(error) {
+        console.warn(error);
+        return null;
+    }
+};
+
+async function countAllTasks(tasklist_id) {
+    try {
+       const taskCount = await passQuery(`SELECT COUNT(*) AS total_count,
+        SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) AS completed_count
+        FROM tasklist_item
+        WHERE tasklist_id = ?;`, [tasklist_id]);
+        return taskCount[0] || null;
+    } catch (error) {
+        console.warn(error);
+        return null;
+    }
+}
+
 module.exports = {
     insertTaskItem,
     checkIfTasklistExist,
@@ -155,4 +180,6 @@ module.exports = {
     editItemDueDate,
     completeItem,
     createTasklist,
+    countCompletedTasks,
+    countAllTasks,
 };

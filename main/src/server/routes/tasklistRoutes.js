@@ -7,7 +7,8 @@ const { getAllTasks,
     deleteTask, 
     updateTaskDesc, 
     addTask, 
-    completeTask } = require('../controllers/tasklistControllers');
+    completeTask, 
+    summarizeTaskProgress} = require('../controllers/tasklistControllers');
 
 // GET route that fetches all items in the db
 router.get('/items', getAllTasks);
@@ -23,6 +24,9 @@ router.patch('/complete', completeTask);
 
 // PATCH route that update description of task in db
 router.patch('/updatedesc', updateTaskDesc);
+
+// GET route that summarize tasklist progress
+router.get('/summary', summarizeTaskProgress);
 
 let lastHeartbeat = Date.now();
 

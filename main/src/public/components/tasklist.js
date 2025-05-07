@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { checkTask, createTask, deleteTask, editTaskDesc } from '../services/tasklistServices.js';
+import { checkTask, createTask, deleteTask, editTaskDesc, getTaskSummary } from '../services/tasklistServices.js';
 import { ToggleDisplay } from './displayUtil.js';
 import { BuildModal } from './modal.js';
 
@@ -66,7 +66,8 @@ function InitTaskList() {
             let item_id = ev.target.dataset.id;
             let is_completed = (ev.target.classList.contains('checked'));
             try {
-                await checkTask(item_id, is_completed);    // Sync in the database            
+                await checkTask(item_id, is_completed);    // Sync in the database
+                await UpdateTasklistSummary();            
                 ev.target.classList.toggle('checked'); //For style purposes
             } catch (error) {
                 tasklistErrorHandler("Tasklist Add Error", error.message );
@@ -134,6 +135,10 @@ function InitTaskList() {
     tasklistDiv.appendChild(tasklist);
     tasklistDiv.appendChild(addTaskListDiv);
 
+    const summaryDiv = document.createElement("span");
+    summaryDiv.id = "tasklist-summary";
+    tasklistDiv.appendChild(summaryDiv);
+
     document.body.appendChild(initTaskContainer);
 
 
@@ -154,7 +159,8 @@ async function AddTaskToTaskList(taskText) {
     }
     const taskBullet = CreateTaskElement(taskText, item_id);
     const tasklist = document.getElementById('taskBullets');
-    tasklist.appendChild(taskBullet); 
+    tasklist.appendChild(taskBullet);
+    await UpdateTasklistSummary(); 
 };
 
 /**
@@ -230,6 +236,7 @@ async function DeleteTaskInTaskList(item_id) {
         return;
     } else {
         taskBullet.remove();
+        await UpdateTasklistSummary();
     }
 };
 
@@ -249,7 +256,7 @@ async function InitUpdateBox(item_id) {
     // Assume focus out means the edit is finished
     updateInput.addEventListener("focusout", async (e) => {
         let description = updateInput.value;
-        if (!validateTaskInput(taskText, "Tasklist Update Error")) return;
+        if (!validateTaskInput(description, "Tasklist Update Error")) return;
         const result = await editTaskDesc(item_id, description); //Sync the update in database
         if (result instanceof Error) {
             BuildModal({ title: "Tasklist Update Error", children: `${result.message}` });
@@ -263,7 +270,7 @@ async function InitUpdateBox(item_id) {
     updateInput.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter') {
             let description = updateInput.value;
-            if (!validateTaskInput(taskText, "Tasklist Update Error")) return;
+            if (!validateTaskInput(description, "Tasklist Update Error")) return;
             const result = await editTaskDesc(item_id, description); //Sync the update in database
             if (result instanceof Error) {
                 BuildModal({ title: "Tasklist Update Error", children: `${result.message}` });
@@ -278,7 +285,11 @@ async function InitUpdateBox(item_id) {
     taskBullet.replaceWith(updateInput);    
 };
 
-
+async function UpdateTasklistSummary() {
+    const output = await getTaskSummary();
+    const span = document.getElementById("tasklist-summary");
+    span.textContent = output;
+};
 
 export {
     InitTaskList,
