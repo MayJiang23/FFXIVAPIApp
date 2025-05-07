@@ -27,8 +27,7 @@ function LayoutMain() {
 		await InitTaskList();
 	  })();	  
 	InitFooter();
-	const headerEle = document.getElementById('header');
-    BuildAuthSection(headerEle);
+    BuildAuthSection();
     BuildUserDropdown();
 };
 

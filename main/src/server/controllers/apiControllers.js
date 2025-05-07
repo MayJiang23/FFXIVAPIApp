@@ -57,7 +57,7 @@ async function getQuests(req, res) {
         console.error("Error fetching map row:", error);
         res.status(500).json("Error fetching quest:", error);
     }
-}
+};
 
 module.exports = {
     listAllMapRowID,
