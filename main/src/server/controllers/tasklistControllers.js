@@ -17,25 +17,20 @@ const { passQuery } = require("../utils/queryUtils");
  */
 async function getTasklistId(req, res) {
     const user_id = await getUserid(req);
-    if (user_id) {
-        let list_id;
-        const check = async () => {
-            list_id = await checkIfTasklistExist(user_id);
-        };
-        check();
-        if (list_id) {
-            return list_id;
-        } else {
-            await createTasklist(user_id);
-            check();
-            return list_id;
-        }
-    } else {
+    if (!user_id) {
         console.warn("No user is found while getting tasklist item");
-        res.status(401).json({ error: "No user is logged in yet, switch to guest services." });
+        res?.status(401).json({ error: "No user is logged in yet, switch to guest services." });
         return null;
     }
-};
+
+    let list_id = await checkIfTasklistExist(user_id);
+    if (!list_id) {
+        await createTasklist(user_id);
+        list_id = await checkIfTasklistExist(user_id); // retry after creation
+    }
+    return list_id;
+}
+
 
 /**
  * getAllTasks
@@ -49,7 +44,7 @@ async function getAllTasks(req, res) {
     const list_id = await getTasklistId(req, res);
     if (!list_id) return;
     try {
-        const items = fetchTaskItems(list_id);
+        const items = await fetchTaskItems(list_id);
         if (!items) {
             console.warn("This user doesn't have any task yet.");
             return res.status(200).json(null);
@@ -92,7 +87,7 @@ async function deleteTask(req, res) {
     const list_id = await getTasklistId(req, res);
     if (!list_id) return;
     try {
-        const item_id = req.body.data;
+        const { item_id } = req.body;
         await deleteItem(list_id, item_id);
         return res.status(200);
     } catch (error) {
@@ -165,8 +160,8 @@ async function completeTask(req, res) {
 
 async function summarizeTaskProgress(req, res) {
     const tasklist_id = await getTasklistId(req);
-    const completed = await countCompletedTasks(tasklist_id);
-    const total = await countAllTasks(tasklist_id);
+    const {completed} = await countCompletedTasks(tasklist_id);
+    const {total} = await countAllTasks(tasklist_id);
     res.json(`You completed ${completed} out of ${total} tasks.`);
 };
   

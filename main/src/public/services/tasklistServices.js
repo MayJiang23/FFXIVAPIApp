@@ -38,7 +38,7 @@ async function createTask(description) {
  */
 async function deleteTask(item_id) {
     try {
-        await api.delete('/tasklist/delete', { item_id } );
+        await api.delete('/tasklist/delete', { data: { item_id } });
     } catch (error) {
         if (isGuestService(error)) {
             deleteLocalTask(item_id);            
@@ -98,12 +98,14 @@ async function getTasks() {
         const response = await api.get('/tasklist/items');
         if (response.data) {
             const items = sortItems(response.data);
-            return items;
-        } 
+            return items || [];
+        } else {
+            return [];
+        }
     } catch (error) {
         if (isGuestService(error)) {
             const items = getLocalTasks();
-            return items;
+            return items || [];
         }
         throw new Error(`Getting all tasks error occured! ${error.message}`, { cause: error });
     }
@@ -113,8 +115,10 @@ async function getTaskSummary() {
     try {
         const response = await api.get('/tasklist/summary');
         if (response.data) {
-            return response.data;
-        } 
+            return response.data || "No task yet.";
+        } else {
+            return "No task yet.";
+        }
     } catch (error) {
         throw new Error(`Getting task summary error occured! ${error.message}`, { cause: error });
     }
