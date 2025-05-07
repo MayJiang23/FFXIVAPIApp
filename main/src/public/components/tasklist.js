@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { checkTask, createTask, deleteTask, editTaskDesc, getTaskSummary, getTasks } from '../services/tasklistServices.js';
 import { ToggleDisplay } from './displayUtil.js';
+import { waitForImageToLoad } from './image.js';
 import { BuildModal } from './modal.js';
 
 function validateTaskInput(input, title = "Tasklist Error") {
@@ -85,6 +86,7 @@ async function InitTaskList() {
     addTaskListIcon.src = "/icons/add.png";
     addTaskListIcon.width = "20";
     addTaskListIcon.className = "tasklist-add-task-icon";
+
     //The task input box container
     const taskTextBoxDiv = document.createElement("div");
     taskTextBoxDiv.id = "tasklist-add-task-text-box";
@@ -140,6 +142,10 @@ async function InitTaskList() {
     tasklistDiv.appendChild(summaryDiv);
 
     document.body.appendChild(initTaskContainer);
+    waitForImageToLoad('img[alt="Tasklist Fold Button"]', '/icons/fold.png');
+    waitForImageToLoad('img[alt="Add Task Icon"]', '/icons/add.png');
+    waitForImageToLoad('img[alt="Enter Tasklist Icon"]', '/icons/check.png');
+
 
     await RenderInitialTaskList();  // ✅ fetch and append tasks
     await UpdateTasklistSummary();  // ✅ update summary
