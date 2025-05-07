@@ -120,7 +120,8 @@ async function getTaskSummary() {
             return "No task yet.";
         }
     } catch (error) {
-        throw new Error(`Getting task summary error occured! ${error.message}`, { cause: error });
+        console.warn(`Getting task summary error occured! ${error.message}`, { cause: error });
+        return "No task yet.";
     }
 }
 
