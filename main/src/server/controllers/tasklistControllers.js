@@ -130,7 +130,6 @@ async function addTask(req, res) {
     try { 
         const { description } = req.body;
         const item_id = await insertTaskItem({ list_id, description });
-        console.log("This is the item");
         return res.status(200).json(item_id);
     } catch (error) {
         console.warn("Unknown error: ", error);
@@ -159,10 +158,16 @@ async function completeTask(req, res) {
 };
 
 async function summarizeTaskProgress(req, res) {
-    const tasklist_id = await getTasklistId(req);
-    const {completed} = await countCompletedTasks(tasklist_id);
-    const {total} = await countAllTasks(tasklist_id);
-    return res.status(200).json(`You completed ${completed} out of ${total} tasks.`);
+    const list_id = await getTasklistId(req);
+    if (!list_id) return;
+    try {
+        const {completed} = await countCompletedTasks(tasklist_id);
+        const {total} = await countAllTasks(tasklist_id);
+        return res.status(200).json(`You completed ${completed} out of ${total} tasks.`);
+    } catch (error) {
+        console.warn(`Either no user is logged in, or there exists no list yet.`);
+        return;
+    }
 };
   
 module.exports = {

@@ -33,7 +33,7 @@ async function InitTaskList() {
     // Creating the fold button in the tasklist
     const foldButton = document.createElement("img");
     foldButton.classList.add("expand");
-    foldButton.src = "./icons/fold.png";
+    foldButton.src = "/icons/fold.png";
     foldButton.style.width = "20";
     foldButton.alt = "Tasklist Fold Button";
     foldButton.classList.add("tasklist-display-button", "expand");
@@ -82,7 +82,7 @@ async function InitTaskList() {
     //The add task list button
     const addTaskListIcon = document.createElement("img");
     addTaskListIcon.alt = "Add Task Icon";
-    addTaskListIcon.src = "./icons/add.png";
+    addTaskListIcon.src = "/icons/add.png";
     addTaskListIcon.width = "20";
     addTaskListIcon.className = "tasklist-add-task-icon";
     //The task input box container
@@ -95,7 +95,7 @@ async function InitTaskList() {
     taskTextBox.className = "tasklist-add-task-text-input";
     //The enter button for the task input
     const enterTaskButton = document.createElement("img");
-    enterTaskButton.src = "./icons/check.png";
+    enterTaskButton.src = "/icons/check.png";
     enterTaskButton.alt = "Enter Tasklist Icon";
     enterTaskButton.className = "tasklist-add-task-enter";
     //The enter button will add a new task in the task list
@@ -143,9 +143,6 @@ async function InitTaskList() {
 
     await RenderInitialTaskList();  // ✅ fetch and append tasks
     await UpdateTasklistSummary();  // ✅ update summary
-
-
-
 };
 
 /**
@@ -155,15 +152,16 @@ async function InitTaskList() {
 async function AddTaskToTaskList(taskText) {
     if (!validateTaskInput(taskText, "Tasklist Add Error")) return;
     // Add the data to the database first
-    const item_id = await createTask(taskText);
-    if (item_id instanceof Error) {
-        BuildModal({ title: "Tasklist Add Error", children: `${result.message}` });
+    try {
+        const item_id = await createTask(taskText);
+        const taskBullet = CreateTaskElement(taskText, item_id);
+        const tasklist = document.getElementById('taskBullets');
+        tasklist.appendChild(taskBullet);
+        await UpdateTasklistSummary(); 
+    } catch (error) {
+        tasklistErrorHandler("Tasklist Add Error", error.message);
         return;
-    }
-    const taskBullet = CreateTaskElement(taskText, item_id);
-    const tasklist = document.getElementById('taskBullets');
-    tasklist.appendChild(taskBullet);
-    await UpdateTasklistSummary(); 
+    } 
 };
 
 /**
@@ -234,18 +232,18 @@ function CreateTaskElement(taskText, item_id) {
 async function DeleteTaskInTaskList(item_id) {
     const taskBullet = document.querySelector(`[data-id="${item_id}"]`);
     if (!taskBullet) {
-        BuildModal({ title: "Task Not Found", children: "This task no longer exists." });
+        tasklistErrorHandler("Task Not Found", "This task no longer exists.");
         return;
       }
     const confirmDelete = async () => {
-        const result = await deleteTask(item_id);
-        if (result instanceof Error) {
-            BuildModal({ title: "Tasklist Delete Error", children: `${result.message}` });
-            return;
-        } else {
+        try {
+            await deleteTask(item_id);
             taskBullet.remove();
             await UpdateTasklistSummary();
             ToggleDisplay('.modal-container.small', false);
+        } catch(error) {
+            tasklistErrorHandler("Tasklist delete error", error.message);
+            return;
         }
     };
 
@@ -274,13 +272,15 @@ async function InitUpdateBox(item_id) {
     updateInput.addEventListener("focusout", async (e) => {
         let description = updateInput.value;
         if (!validateTaskInput(description, "Tasklist Update Error")) return;
-        const result = await editTaskDesc(item_id, description); //Sync the update in database
-        if (result instanceof Error) {
-            BuildModal({ title: "Tasklist Update Error", children: `${result.message}` });
+        try {
+            await editTaskDesc(item_id, description); //Sync the update in database
+            const updatedEle = CreateTaskElement(description, item_id); //Create new element of tasklist
+            updateInput.replaceWith(updatedEle); //Replace the input box with the updated ele
+        } catch(error) {
+            tasklistErrorHandler("Tasklist Update Error", error.message);
             return;
         }
-        const updatedEle = CreateTaskElement(description, item_id); //Create new element of tasklist
-        updateInput.replaceWith(updatedEle); //Replace the input box with the updated ele
+        
     });
 
     // Assume enter means the edit is finished
@@ -288,13 +288,14 @@ async function InitUpdateBox(item_id) {
         if (e.key === 'Enter') {
             let description = updateInput.value;
             if (!validateTaskInput(description, "Tasklist Update Error")) return;
-            const result = await editTaskDesc(item_id, description); //Sync the update in database
-            if (result instanceof Error) {
-                BuildModal({ title: "Tasklist Update Error", children: `${result.message}` });
+            try {
+                await editTaskDesc(item_id, description); //Sync the update in database
+                const updatedEle = CreateTaskElement(description, item_id); //Create new element of tasklist
+                updateInput.replaceWith(updatedEle);
+            } catch(error) {
+                tasklistErrorHandler("Tasklist Update Error", error.message);
                 return;
             }
-            const updatedEle = CreateTaskElement(description, item_id); //Create new element of tasklist
-            updateInput.replaceWith(updatedEle);
         }
     });
     

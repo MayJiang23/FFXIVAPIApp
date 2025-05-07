@@ -32,18 +32,18 @@ function CreateLoginPanel() {
 	const loginForm = document.getElementById("loginForm");
 
 	//Assign event listener for the register form
-	loginForm.addEventListener("submit", (e) => {
+	loginForm.addEventListener("submit", async (e) => {
 	  e.preventDefault(); 
 	  
 	  //Grabbing all the values from the form
 	  const email = document.getElementById("emailInputLog").value;
 	  const password = document.getElementById("passLog").value;
-	  const result = loginValidate(email, password);
-	  if (result instanceof Error) {
-		BuildModal({ title: "Login Error", children: `${result.message}` });
-	  } else {
+	  try {
+		await loginValidate(email, password);
 		BuildModal({ title: "Successful Login!", children: "You successfully logged in!" });
-	  }   
+	  } catch (error) {
+		BuildModal({ title: "Login Error", children: `${error.message}` });
+	  }
 	});
 };
 

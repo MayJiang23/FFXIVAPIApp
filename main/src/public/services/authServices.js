@@ -13,10 +13,10 @@ const loginValidate = async (email, password) => {
 	if (response.data) {
 	  return response.data;
 	} else {
-	  return new Error(response.data.error.message);
+	  throw new Error(response.data.error.message);
 	}
   } catch (error) {
-	return new Error(`User login error occured! ${error}`, { cause: error });
+	throw new Error(`User login error occured! ${error}`, { cause: error });
   }
 };
 
@@ -34,13 +34,13 @@ const registerUser = async (newUser) => {
 	if (response.data) {
 		return response.data;
 	} else {
-		return new Error(response.data.error.message);
+		throw new Error(response.data.error.message);
 	}
   } catch (error) {
 	if (error.response.status === 409) {
-	  return new Error('Email already in use, try logging in or resetting password.', { cause: error });
+	  throw new Error('Email already in use, try logging in or resetting password.', { cause: error });
 	} else {
-		return new Error(`User register error occured! ${error}`, { cause: error });
+		throw new Error(`User register error occured! ${error.message}`, { cause: error });
 	}
   }
 };
